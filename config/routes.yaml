@@ -1,0 +1,3 @@
+#app_caravans:
+#    path: /
+#    controller: App\Controller\CaravanAdminController::index

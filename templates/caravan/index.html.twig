@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('.input-daterange').datepicker(
+                {
+                    language: 'cs',
+                    todayHighlight: true,
+                }
+            );
+        });
+    </script>
+{% endblock javascripts %}
+
+{% block content %}
+    <img src="{{ asset('images/karavany-pujcovna-noc.jpg')}}" class="img-fluid" alt="Užij si s našimi karavany pohledy na krásnou noční oblohu.">
+    <form>
+        <div class="form-row">
+            <div class="col">
+                <div class="input-group input-daterange">
+                    <input type="text" class="form-control" value="">
+                    <div class="input-group-addon">do</div>
+                    <input type="text" class="form-control" value="">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="button-addon2">Hledat</button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

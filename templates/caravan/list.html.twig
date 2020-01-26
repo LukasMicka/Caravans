@@ -1,0 +1,116 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('css/list.css') }}">
+{% endblock stylesheets %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function () {
+        $('.input-daterange').each(function () {
+            $(this).datepicker(
+                {
+                    language: 'cs',
+                    todayHighlight: true,
+                    datesDisabled: ['30.01.2020', '31.01.2020'],
+                }
+            );
+        });
+
+        $('.book-caravan').submit(function (e) {
+            e.preventDefault();
+
+            let caravanId = $(this).data('id');
+            let payload = {};
+
+            payload.firstName = $(this).find('.first-name').val() !== '' ? $(this).find('.first-name').val() : null;
+            payload.surname = $(this).find('.surname').val() !== '' ? $(this).find('.surname').val() : null;
+            payload.phone = $(this).find('.phone').val() !== '' ? $(this).find('.phone').val() : null;
+            payload.email = $(this).find('.email').val() !== '' ? $(this).find('.email').val() : null;
+            payload.bookFrom = $(this).find('.book-from').val() !== '' ? $(this).find('.book-from').val() : null;
+            payload.bookTill = $(this).find('.book-till').val() !== '' ? $(this).find('.book-till').val() : null;
+            payload.note = $(this).find('.note').val() !== '' ? $(this).find('.note').val() : null;
+
+            $.post("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), JSON.stringify(payload), function (response) {
+                alert(response.message);
+                
+                if (response.status === 'success') {
+                    $(`#modal-${caravanId}`).modal('toggle');
+                }
+            })
+                .fail(function () {
+                    alert('Rezervaci se bohužel nepodařilo odeslat. Zkuste prosím zopakovat akci, popř. nás kontaktujte.');
+                });
+        });
+    });
+</script>
+{% endblock javascripts %}
+
+{% block content %}
+{% for caravan in caravans %}
+<div class="row">
+    <div class="col-4">
+        <img src="{{ asset(caravan.image)}}" class="img-fluid" alt="{{ caravan.name }}">
+    </div>
+    <div class="col-6">
+        <h3>{{ caravan.name }}</h3>
+        <section>{{ caravan.color }}</section>
+    </div>
+    <div class="col-2">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#modal-{{ caravan.id }}">Rezervovat</button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modal-{{ caravan.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Rezervace vozidla</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="book-caravan" data-id="{{ caravan.id }}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="firstName">Jméno</label>
+                            <input type="text" class="form-control first-name" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="surname">Příjmení</label>
+                            <input type="text" class="form-control surname" id="surname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefonní číslo</label>
+                            <input type="tel" class="form-control phone" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Emailová adresa</label>
+                            <input type="email" class="form-control email" id="email" required>
+                        </div>
+                        <div class="form-group input-daterange">
+                            <label for="bookFrom">Rezervovat od</label>
+                            <input type="text" class="form-control book-from" id="bookFrom" autocomplete="off" required>
+                            <div class="input-group-addon"></div>
+                            <label for="bookTill">Rezervovat do</label>
+                            <input type="text" class="form-control book-till" id="bookTill" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="note">Poznámka</label>
+                            <textarea class="form-control note" id="note" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" id="button-addon2">Odeslat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

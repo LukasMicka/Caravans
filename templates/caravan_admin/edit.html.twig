@@ -1,0 +1,13 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Edit Caravan{% endblock %}
+
+{% block body %}
+    <h1>Edit Caravan</h1>
+
+    {{ include('caravan_admin/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('caravan_index') }}">back to list</a>
+
+    {{ include('caravan_admin/_delete_form.html.twig') }}
+{% endblock %}
