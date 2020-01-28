@@ -27,8 +27,20 @@ class CaravanController extends AbstractController
         $repoCaravans = $em->getRepository(Caravan::class);
         $caravans = $repoCaravans->findAll();
 
+        $start = new \DateTime( '01.02.2020' );
+        $end = new \DateTime( '20.02.2020' );
+        $end = $end->modify( '+1 day' );
+        $interval = new \DateInterval('P1D');
+        $bookedPeriod = new \DatePeriod($start, $interval ,$end);
+
+        $bookedDates = [];
+        foreach($bookedPeriod as $date){
+            $bookedDates[] = $date->format("d.m.Y");
+        }
+
         return $this->render('caravan/list.html.twig', [
             'caravans' => $caravans,
+            'datesDisabled' => $bookedDates,
         ]);
     }
 }

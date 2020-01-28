@@ -9,12 +9,14 @@
 {{ parent() }}
 <script>
     $(document).ready(function () {
+        let datesDisabled = '{{ datesDisabled|json_encode|raw }}';
+        
         $('.input-daterange').each(function () {
             $(this).datepicker(
                 {
                     language: 'cs',
                     todayHighlight: true,
-                    datesDisabled: ['30.01.2020', '31.01.2020'],
+                    datesDisabled: datesDisabled,
                 }
             );
         });
@@ -32,17 +34,27 @@
             payload.bookFrom = $(this).find('.book-from').val() !== '' ? $(this).find('.book-from').val() : null;
             payload.bookTill = $(this).find('.book-till').val() !== '' ? $(this).find('.book-till').val() : null;
             payload.note = $(this).find('.note').val() !== '' ? $(this).find('.note').val() : null;
-
-            $.post("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), JSON.stringify(payload), function (response) {
-                alert(response.message);
+            
+            fetch("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), 
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            )
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
                 
-                if (response.status === 'success') {
+                if (data.status === 'success') {
                     $(`#modal-${caravanId}`).modal('toggle');
                 }
             })
-                .fail(function () {
-                    alert('Rezervaci se bohužel nepodařilo odeslat. Zkuste prosím zopakovat akci, popř. nás kontaktujte.');
-                });
+            .catch(() => {
+                alert('Rezervaci se bohužel nepodařilo odeslat. Zkuste prosím zopakovat akci, popř. nás kontaktujte.');
+            });   
         });
     });
 </script>
