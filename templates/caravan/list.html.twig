@@ -8,7 +8,7 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-    $(document).ready(function () {
+    document.addEventListener('DOMContentLoaded', () => {
         let datesDisabled = '{{ datesDisabled|json_encode|raw }}';
         
         $('.input-daterange').each(function () {
@@ -89,35 +89,35 @@
                 <form class="book-caravan" data-id="{{ caravan.id }}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="firstName">Jméno</label>
-                            <input type="text" class="form-control first-name" id="firstName" required>
+                            <label for="firstName-{{ caravan.id }}">Jméno</label>
+                            <input type="text" class="form-control first-name" id="firstName-{{ caravan.id }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="surname">Příjmení</label>
-                            <input type="text" class="form-control surname" id="surname" required>
+                            <label for="surname-{{ caravan.id }}">Příjmení</label>
+                            <input type="text" class="form-control surname" id="surname-{{ caravan.id }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="phone">Telefonní číslo</label>
-                            <input type="tel" class="form-control phone" id="phone" required>
+                            <label for="phone-{{ caravan.id }}">Telefonní číslo</label>
+                            <input type="tel" class="form-control phone" id="phone-{{ caravan.id }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Emailová adresa</label>
-                            <input type="email" class="form-control email" id="email" required>
+                            <label for="email-{{ caravan.id }}">Emailová adresa</label>
+                            <input type="email" class="form-control email" id="email-{{ caravan.id }}" required>
                         </div>
                         <div class="form-group input-daterange">
-                            <label for="bookFrom">Rezervovat od</label>
-                            <input type="text" class="form-control book-from" id="bookFrom" autocomplete="off" required>
+                            <label for="bookFrom-{{ caravan.id }}">Rezervovat od</label>
+                            <input type="text" class="form-control book-from" id="bookFrom-{{ caravan.id }}" autocomplete="off" required>
                             <div class="input-group-addon"></div>
-                            <label for="bookTill">Rezervovat do</label>
-                            <input type="text" class="form-control book-till" id="bookTill" autocomplete="off" required>
+                            <label for="bookTill-{{ caravan.id }}">Rezervovat do</label>
+                            <input type="text" class="form-control book-till" id="bookTill-{{ caravan.id }}" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="note">Poznámka</label>
-                            <textarea class="form-control note" id="note" rows="3"></textarea>
+                            <label for="note-{{ caravan.id }}">Poznámka</label>
+                            <textarea class="form-control note" id="note-{{ caravan.id }}" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit" id="button-addon2">Odeslat</button>
+                        <button class="btn btn-primary" type="submit">Odeslat</button>
                     </div>
                 </form>
             </div>
