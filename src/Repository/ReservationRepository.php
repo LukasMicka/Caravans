@@ -19,6 +19,15 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+    public function findAllReservations(): array
+    {
+        $q = $this->createQueryBuilder('r')
+            ->join('r.caravan', 'c')
+            ->getQuery();
+
+        return $q->execute();
+    }
+
     // /**
     //  * @return Reservation[] Returns an array of Reservation objects
     //  */
