@@ -15,7 +15,7 @@ class ReservationController extends AbstractController
     /**
      * @Route("/reservation/create/{caravanId}", name="createReservation", methods={"POST"})
      */
-    public function create(Request $request, int $caravanId, ValidatorInterface $validator)
+    public function create(Request $request, int $caravanId, ValidatorInterface $validator): JsonResponse
     {
         $em = $this->getDoctrine()->getManager();
         $json = json_decode($request->getContent(), true);

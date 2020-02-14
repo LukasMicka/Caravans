@@ -10,51 +10,56 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let datesDisabled = '{{ datesDisabled|json_encode|raw }}';
-        
-        $('.input-daterange').each(function () {
+
+        $('.input-daterange input').each(function () {
             $(this).datepicker(
                 {
                     language: 'cs',
                     todayHighlight: true,
                     datesDisabled: datesDisabled,
                 }
-            );
-        });
-
-        $('.book-caravan').submit(function (e) {
-            e.preventDefault();
-
-            let caravanId = $(this).data('id');
-            let payload = {};
-
-            payload.firstName = $(this).find('.first-name').val() !== '' ? $(this).find('.first-name').val() : null;
-            payload.surname = $(this).find('.surname').val() !== '' ? $(this).find('.surname').val() : null;
-            payload.phone = $(this).find('.phone').val() !== '' ? $(this).find('.phone').val() : null;
-            payload.email = $(this).find('.email').val() !== '' ? $(this).find('.email').val() : null;
-            payload.bookFrom = $(this).find('.book-from').val() !== '' ? $(this).find('.book-from').val() : null;
-            payload.bookTill = $(this).find('.book-till').val() !== '' ? $(this).find('.book-till').val() : null;
-            payload.note = $(this).find('.note').val() !== '' ? $(this).find('.note').val() : null;
-            
-            fetch("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), 
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                }
             )
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                
-                if (data.status === 'success') {
-                    $(`#modal-${caravanId}`).modal('toggle');
-                }
-            })
-            .catch(() => {
-                alert('Rezervaci se bohužel nepodařilo odeslat. Zkuste prosím zopakovat akci, popř. nás kontaktujte.');
-            });   
+        });
+        
+        $('#modal-book').on('show.bs.modal', function (e) {
+            if(e.namespace === 'bs.modal') {
+                let bookButton = $(e.relatedTarget);
+                let caravanId = bookButton.data('caravan');
+
+                $('.book-caravan').off().submit(function (e) {
+                    e.preventDefault();
+                    let payload = {};
+
+                    payload.firstName = $(this).find('.first-name').val() !== '' ? $(this).find('.first-name').val() : null;
+                    payload.surname = $(this).find('.surname').val() !== '' ? $(this).find('.surname').val() : null;
+                    payload.phone = $(this).find('.phone').val() !== '' ? $(this).find('.phone').val() : null;
+                    payload.email = $(this).find('.email').val() !== '' ? $(this).find('.email').val() : null;
+                    payload.bookFrom = $(this).find('.book-from').val() !== '' ? $(this).find('.book-from').val() : null;
+                    payload.bookTill = $(this).find('.book-till').val() !== '' ? $(this).find('.book-till').val() : null;
+                    payload.note = $(this).find('.note').val() !== '' ? $(this).find('.note').val() : null;
+                    
+                    fetch("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), 
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(payload),
+                        }
+                    )
+                    .then((response) => response.json())
+                    .then((data) => {
+                        alert(data.message);
+
+                        if (data.status === 'success') {
+                            $(`#modal-book`).modal('toggle');
+                        }
+                    })
+                    .catch(() => {
+                        alert('Rezervaci se bohužel nepodařilo odeslat. Zkuste prosím zopakovat akci, popř. nás kontaktujte.');
+                    });   
+                });
+            }
         });
     });
 </script>
@@ -72,57 +77,57 @@
     </div>
     <div class="col-2">
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal"
-            data-target="#modal-{{ caravan.id }}">Rezervovat</button>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="modal-{{ caravan.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Rezervace vozidla</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form class="book-caravan" data-id="{{ caravan.id }}">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="firstName-{{ caravan.id }}">Jméno</label>
-                            <input type="text" class="form-control first-name" id="firstName-{{ caravan.id }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="surname-{{ caravan.id }}">Příjmení</label>
-                            <input type="text" class="form-control surname" id="surname-{{ caravan.id }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone-{{ caravan.id }}">Telefonní číslo</label>
-                            <input type="tel" class="form-control phone" id="phone-{{ caravan.id }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email-{{ caravan.id }}">Emailová adresa</label>
-                            <input type="email" class="form-control email" id="email-{{ caravan.id }}" required>
-                        </div>
-                        <div class="form-group input-daterange">
-                            <label for="bookFrom-{{ caravan.id }}">Rezervovat od</label>
-                            <input type="text" class="form-control book-from" id="bookFrom-{{ caravan.id }}" autocomplete="off" required>
-                            <div class="input-group-addon"></div>
-                            <label for="bookTill-{{ caravan.id }}">Rezervovat do</label>
-                            <input type="text" class="form-control book-till" id="bookTill-{{ caravan.id }}" autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="note-{{ caravan.id }}">Poznámka</label>
-                            <textarea class="form-control note" id="note-{{ caravan.id }}" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit">Odeslat</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <button type="button" class="btn btn-primary button-book" data-toggle="modal"
+            data-target="#modal-book" data-caravan="{{ caravan.id }}">Rezervovat</button>
     </div>
 </div>
 {% endfor %}
+<!-- Modal -->
+<div class="modal fade" id="modal-book" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Rezervace vozidla</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="book-caravan">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="first-name">Jméno</label>
+                        <input type="text" class="form-control first-name" id="first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Příjmení</label>
+                        <input type="text" class="form-control surname" id="surname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefonní číslo</label>
+                        <input type="tel" class="form-control phone" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Emailová adresa</label>
+                        <input type="email" class="form-control email" id="email" required>
+                    </div>
+                    <div class="form-group input-daterange">
+                        <label for="book-from">Rezervovat od</label>
+                        <input type="text" class="form-control book-from" id="book-from" autocomplete="off" required>
+                        <div class="input-group-addon"></div>
+                        <label for="book-till">Rezervovat do</label>
+                        <input type="text" class="form-control book-till" id="book-till" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="note">Poznámka</label>
+                        <textarea class="form-control note" id="note" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit">Odeslat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock content %}

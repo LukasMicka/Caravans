@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Caravan;
 use App\Entity\Reservation;
+use Symfony\Component\HttpFoundation\Response;
 
 class CaravanController extends AbstractController
 {
