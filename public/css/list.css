@@ -1,0 +1,9 @@
+.datepicker table tr td.disabled{
+    color: grey;
+    text-decoration: line-through;
+}
+
+.datepicker table tr td.disabled:hover{
+    color: grey;
+    text-decoration: line-through;
+}

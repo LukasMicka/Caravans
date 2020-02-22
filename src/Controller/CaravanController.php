@@ -30,7 +30,7 @@ class CaravanController extends AbstractController
         $caravans = $repoCaravans->findAll();
         $repoReservations = $em->getRepository(Reservation::class);
         $reservations = $repoReservations->findAllReservations();
-        
+
         $existingReservations = [];
         $interval = new \DateInterval('P1D');
         foreach ($reservations as $reservation) {
@@ -40,10 +40,14 @@ class CaravanController extends AbstractController
         }
         
         $bookedDates = [];
+        $now = new \DateTime();
         foreach ($existingReservations as $caravanId => $reservations) {
             foreach ($reservations as $datePeriod) {
                 foreach($datePeriod as $date) {
-                    $bookedDates[$caravanId][] = $date->format("d.m.Y");
+                    
+                    if ($date >= $now) {
+                        $bookedDates[$caravanId][] = $date->format("d.m.Y");
+                    }
                 }
             }
         }

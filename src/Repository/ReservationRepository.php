@@ -21,11 +21,13 @@ class ReservationRepository extends ServiceEntityRepository
 
     public function findAllReservations(): array
     {
+        $now = new \DateTime();
         $q = $this->createQueryBuilder('r')
             ->join('r.caravan', 'c')
+            ->where('r.reservationTo > :now')
             ->getQuery();
 
-        return $q->execute();
+        return $q->execute(['now' => $now]);
     }
 
     // /**

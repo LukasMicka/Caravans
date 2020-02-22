@@ -9,14 +9,15 @@
 {{ parent() }}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let datesDisabled = '{{ datesDisabled|json_encode|raw }}';
-
-        $('.input-daterange input').each(function () {
+        let datesDisabledAsJson = '{{ datesDisabled|json_encode|raw }}';
+        let datesDisabled = JSON.parse(datesDisabledAsJson);
+        $('.input-daterange').each(function () {
             $(this).datepicker(
                 {
                     language: 'cs',
                     todayHighlight: true,
-                    datesDisabled: datesDisabled,
+                    startDate: new Date(),
+                    orientation: 'bottom',
                 }
             )
         });
@@ -25,6 +26,14 @@
             if(e.namespace === 'bs.modal') {
                 let bookButton = $(e.relatedTarget);
                 let caravanId = bookButton.data('caravan');
+
+                let caravans = Object.keys(datesDisabled);
+                caravans.forEach((id) => {
+                    
+                    if(id == caravanId) {
+                        $('.book-from, .book-till').datepicker('setDatesDisabled', datesDisabled[id]);
+                    }               
+                });
 
                 $('.book-caravan').off().submit(function (e) {
                     e.preventDefault();
@@ -50,7 +59,6 @@
                     .then((response) => response.json())
                     .then((data) => {
                         alert(data.message);
-
                         if (data.status === 'success') {
                             $(`#modal-book`).modal('toggle');
                         }
@@ -60,6 +68,10 @@
                     });   
                 });
             }
+        });
+
+        $('#modal-book').scroll(function () {
+            $('.book-from, .book-till').datepicker('place');
         });
     });
 </script>
