@@ -38,9 +38,15 @@ class Caravan
      */
     private $image;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Pricelist", mappedBy="caravan")
+     */
+    private $pricelists;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+        $this->pricelists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +117,37 @@ class Caravan
     public function setImage(string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Pricelist[]
+     */
+    public function getPricelists(): Collection
+    {
+        return $this->pricelists;
+    }
+
+    public function addPricelist(Pricelist $pricelist): self
+    {
+        if (!$this->pricelists->contains($pricelist)) {
+            $this->pricelists[] = $pricelist;
+            $pricelist->setCaravan($this);
+        }
+
+        return $this;
+    }
+
+    public function removePricelist(Pricelist $pricelist): self
+    {
+        if ($this->pricelists->contains($pricelist)) {
+            $this->pricelists->removeElement($pricelist);
+            // set the owning side to null (unless already changed)
+            if ($pricelist->getCaravan() === $this) {
+                $pricelist->setCaravan(null);
+            }
+        }
 
         return $this;
     }

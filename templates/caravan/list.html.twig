@@ -35,6 +35,33 @@
                     }               
                 });
 
+                $('.book-from, .book-till').change(function() {
+                    let payload = {};
+                    payload.bookFrom = $('.book-from').val() ? $('.book-from').val() : null;
+                    payload.bookTill = $('.book-till').val() ? $('.book-till').val() : null;
+                    
+                    fetch("{{ path('getTotalPriceVatForPeriod', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                    
+                        if(data.status === 'success') {
+                            $('.show-total').html(`Cena celkem: <span class="show-total-price-vat">${data.totalPrice.priceVat}</span><span class="show-total-currency"> ${data.totalPrice.currency}</span>`);
+                        }
+                        else {
+                            $('.show-total').empty();
+                        }
+                    })
+                    .catch(() => {
+                        alert("Celkovou cenu za zapůjčení karavanu se bohužel nepodařilo zkalkulovat.")
+                    });
+                });
+
                 $('.book-caravan').off().submit(function (e) {
                     e.preventDefault();
                     let payload = {};
@@ -47,15 +74,13 @@
                     payload.bookTill = $(this).find('.book-till').val() !== '' ? $(this).find('.book-till').val() : null;
                     payload.note = $(this).find('.note').val() !== '' ? $(this).find('.note').val() : null;
                     
-                    fetch("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), 
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(payload),
-                        }
-                    )
+                    fetch("{{ path('createReservation', {'caravanId': '__ID__'}) }}".replace('__ID__', caravanId), {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(payload),
+                    })
                     .then((response) => response.json())
                     .then((data) => {
                         alert(data.message);
@@ -86,6 +111,15 @@
     <div class="col-6">
         <h3>{{ caravan.name }}</h3>
         <section>{{ caravan.color }}</section>
+        {% for pricelist in caravan.pricelists %}
+        <section class="season">
+            <div>
+                <div>{{ pricelist.name }}</div>
+                <div>{{ pricelist.validFrom|date('d.m.Y') }} - {{ pricelist.validTill|date('d.m.Y') }}</div>
+            </div>
+            <div>{{ pricelist.priceVat|number_format(2, ',', ' ') }} {{ pricelist.currency }}</div>
+        </section>
+        {% endfor %}
     </div>
     <div class="col-2">
         <!-- Button trigger modal -->
@@ -136,6 +170,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <div class="show-total"></div>
                     <button class="btn btn-primary" type="submit">Odeslat</button>
                 </div>
             </form>
