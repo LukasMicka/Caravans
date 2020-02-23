@@ -104,26 +104,21 @@
 
 {% block content %}
 {% for caravan in caravans %}
-<div class="row">
+<div class="row my-3">
     <div class="col-4">
         <img src="{{ asset(caravan.image)}}" class="img-fluid" alt="{{ caravan.name }}">
     </div>
-    <div class="col-6">
+    <div class="col-8">
         <h3>{{ caravan.name }}</h3>
-        <section>{{ caravan.color }}</section>
+        <section class="mt-3">Barva: {{ caravan.color }}</section>
         {% for pricelist in caravan.pricelists %}
-        <section class="season">
-            <div>
-                <div>{{ pricelist.name }}</div>
-                <div>{{ pricelist.validFrom|date('d.m.Y') }} - {{ pricelist.validTill|date('d.m.Y') }}</div>
-            </div>
-            <div>{{ pricelist.priceVat|number_format(2, ',', ' ') }} {{ pricelist.currency }}</div>
+        <section class="pricelist d-flex mt-3">
+            <div class="pricelist-description">{{ pricelist.name }} ({{ pricelist.validFrom|date('d.m.Y') }} - {{ pricelist.validTill|date('d.m.Y') }})</div>
+            <div class="pricelist-price">{{ pricelist.priceVat|number_format(2, ',', ' ') }} {{ pricelist.currency }} / den</div>
         </section>
         {% endfor %}
-    </div>
-    <div class="col-2">
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary button-book" data-toggle="modal"
+        <button type="button" class="btn btn-primary mt-5 button-book" data-toggle="modal"
             data-target="#modal-book" data-caravan="{{ caravan.id }}">Rezervovat</button>
     </div>
 </div>

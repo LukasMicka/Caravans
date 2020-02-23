@@ -8,6 +8,11 @@
     text-decoration: line-through;
 }
 
-.season {
-    display: flex;
+.pricelist-description {
+    flex: 1;
+}
+
+.pricelist-price {
+    flex: 1;
+    font-weight: bold;
 }
