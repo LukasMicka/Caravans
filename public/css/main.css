@@ -8,3 +8,8 @@ h3
 {
     font-family: 'Montserrat', 'Lato', sans-serif;
 }
+
+.navbar,
+.card-footer {
+    background-color: #FFFFFF;
+}
